@@ -7,8 +7,8 @@ jobs:
     isConsoleApp: true
     waitForExit: true
     variables:      
-      Protocal: http         
-    arguments: " {{Protocal}} "
+      Url: http://v-carwan02.redmond.corp.microsoft.com/SayHello/SayHello.svc         
+    arguments: " {{Url}} "
   
 
 scenarios:
