@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using Benchmarks;
 
 namespace ConsoleApp5
 {
@@ -13,7 +15,14 @@ namespace ConsoleApp5
             binding.AllowCookies = true;
            var address= new System.ServiceModel.EndpointAddress(args[0]);
             ServiceReference1.SayHelloClient client = new ServiceReference1.SayHelloClient(binding,address);
-           var result= client.HelloAsync("helloworld");
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            var result= client.HelloAsync("helloworld");
+            var elapsed = stopwatch.ElapsedMilliseconds;
+            Console.WriteLine($"{elapsed} ms");
+
+            BenchmarksEventSource.Log.Metadata("http/firstrequest", "max", "max", "First Request (ms)", "Time to first request in ms", "n0");
+            BenchmarksEventSource.Measure("http/firstrequest", elapsed);
             Console.WriteLine(result.Result);
         }
     }
