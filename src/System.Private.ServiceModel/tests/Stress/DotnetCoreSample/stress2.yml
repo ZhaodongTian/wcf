@@ -1,0 +1,80 @@
+jobs:
+  a:
+    source:
+      repository: https://github.com/ZhaodongTian/wcf.git
+      branchOrCommit: PerfStress
+      project: src/System.Private.ServiceModel/tests/Stress/DotnetCoreSample/SampleClient/ConsoleApp5/ConsoleApp5.csproj
+    isConsoleApp: true
+    waitForExit: true
+    variables:      
+      Url: http://v-carwan02.redmond.corp.microsoft.com/SayHello/SayHello.svc         
+    arguments: " {{Url}} buffered "
+  b:
+    source:
+      repository: https://github.com/ZhaodongTian/wcf.git
+      branchOrCommit: PerfStress
+      project: src/System.Private.ServiceModel/tests/Stress/DotnetCoreSample/SampleClient/ConsoleApp5/ConsoleApp5.csproj
+    isConsoleApp: true
+    waitForExit: true
+    variables:      
+      Url: http://v-carwan02.redmond.corp.microsoft.com/SayHello/SayHello.svc         
+    arguments: " {{Url}} streamed "
+  c:
+    source:
+      repository: https://github.com/ZhaodongTian/wcf.git
+      branchOrCommit: PerfStress
+      project: src/System.Private.ServiceModel/tests/Stress/DotnetCoreSample/SampleClient/ConsoleApp5/ConsoleApp5.csproj
+    isConsoleApp: true
+    waitForExit: true
+    variables:      
+      Url: http://v-carwan02.redmond.corp.microsoft.com/SayHello/SayHello.svc         
+    arguments: " {{Url}} streamedrequest "
+  d:
+    source:
+      repository: https://github.com/ZhaodongTian/wcf.git
+      branchOrCommit: PerfStress
+      project: src/System.Private.ServiceModel/tests/Stress/DotnetCoreSample/SampleClient/ConsoleApp5/ConsoleApp5.csproj
+    isConsoleApp: true
+    waitForExit: true
+    variables:      
+      Url: http://v-carwan02.redmond.corp.microsoft.com/SayHello/SayHello.svc         
+    arguments: " {{Url}} streamedresponse "
+  
+
+scenarios:
+  helloBuffered:    
+    load:
+      job: a
+      variables:
+        serverPort: 8231
+        path: /
+  helloStreamed:    
+    load:
+      job: b
+      variables:
+        serverPort: 8231
+        path: /
+  helloStreamedRequest:    
+    load:
+      job: c
+      variables:
+        serverPort: 8231
+        path: /
+  helloStreamedResponse:    
+    load:
+      job: d
+      variables:
+        serverPort: 8231
+        path: /
+
+profiles:
+  local:
+    variables:
+      serverUri: Http://localhost
+    jobs: 
+      application:
+        endpoints: 
+          - http://localhost:5010
+      load:
+        endpoints: 
+          - http://localhost:5010
