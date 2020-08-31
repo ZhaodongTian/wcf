@@ -9,12 +9,38 @@ namespace ConsoleApp5
     {
         static void Main(string[] args)
         {
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Arguments required: [url], [transferMode]");
+                return;
+            }
+            var address = new System.ServiceModel.EndpointAddress(args[0]);
+            string transferMode = args[1];
+
             System.ServiceModel.BasicHttpBinding binding = new System.ServiceModel.BasicHttpBinding();
             binding.MaxBufferSize = int.MaxValue;
             binding.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
             binding.MaxReceivedMessageSize = int.MaxValue;
             binding.AllowCookies = true;
-           var address= new System.ServiceModel.EndpointAddress(args[0]);
+            switch (transferMode.ToLower())
+            {
+                case "buffered":
+                    binding.TransferMode = System.ServiceModel.TransferMode.Buffered;
+                    break;
+                case "streamed":
+                    binding.TransferMode = System.ServiceModel.TransferMode.Streamed;
+                    break;
+                case "streamedrequest":
+                    binding.TransferMode = System.ServiceModel.TransferMode.StreamedRequest;
+                    break;
+                case "streamedresponse":
+                    binding.TransferMode = System.ServiceModel.TransferMode.StreamedResponse;
+                    break;
+                default:
+                    break;
+            }
+            Console.WriteLine($"Testing TransferMode: {binding.TransferMode}");
+
             ServiceReference1.SayHelloClient client = new ServiceReference1.SayHelloClient(binding,address);
             var stopwatch = new Stopwatch();
             stopwatch.Start();
