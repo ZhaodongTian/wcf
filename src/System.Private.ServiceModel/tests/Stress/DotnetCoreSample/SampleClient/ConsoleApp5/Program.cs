@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using Benchmarks;
 
@@ -90,6 +93,7 @@ namespace ConsoleApp5
                         BenchmarksEventSource.Measure("bombardier/rps/max", request / test._paramPerfMeasurementDuration.TotalSeconds);
                         break;
                     case TestBinding.WSHttp:
+                        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(RemoteCertValidate);
                         WSHttpBinding wsHttpBinding = new WSHttpBinding(SecurityMode.TransportWithMessageCredential);
                         ChannelFactory<ISayHello> wsHttpFactory = new ChannelFactory<ISayHello>(wsHttpBinding, new EndpointAddress(test._paramServiceUrl));
                         wsHttpFactory.Credentials.UserName.UserName = "abc";
@@ -113,7 +117,7 @@ namespace ConsoleApp5
                         BenchmarksEventSource.Measure("bombardier/rps/max", request / test._paramPerfMeasurementDuration.TotalSeconds);
                         break;
                     case TestBinding.NetTcp:                        
-                        NetTcpBinding netTcpBinding = new NetTcpBinding() ;
+                        NetTcpBinding netTcpBinding = new NetTcpBinding(SecurityMode.None) ;
                         ChannelFactory<IService1> netTcpFactory = new ChannelFactory<IService1>(netTcpBinding, new EndpointAddress(test._paramServiceUrl));
                         var stopwatchNetTcpChannelOpen = new Stopwatch();
                         stopwatchNetTcpChannelOpen.Start();
@@ -137,60 +141,6 @@ namespace ConsoleApp5
                         break;
                 }
             }
-
-
-            //var address = new System.ServiceModel.EndpointAddress(args[0]);
-            //string transferMode = args[1];
-
-            //System.ServiceModel.BasicHttpBinding binding = new System.ServiceModel.BasicHttpBinding();
-            //binding.MaxBufferSize = int.MaxValue;
-            //binding.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
-            //binding.MaxReceivedMessageSize = int.MaxValue;
-            //binding.AllowCookies = true;
-            //switch (transferMode.ToLower())
-            //{
-            //    case "buffered":
-            //        binding.TransferMode = System.ServiceModel.TransferMode.Buffered;
-            //        break;
-            //    case "streamed":
-            //        binding.TransferMode = System.ServiceModel.TransferMode.Streamed;
-            //        break;
-            //    case "streamedrequest":
-            //        binding.TransferMode = System.ServiceModel.TransferMode.StreamedRequest;
-            //        break;
-            //    case "streamedresponse":
-            //        binding.TransferMode = System.ServiceModel.TransferMode.StreamedResponse;
-            //        break;
-            //    default:
-            //        break;
-            //}
-            //Console.WriteLine($"Testing TransferMode: {binding.TransferMode}");
-
-            // ServiceReference1.SayHelloClient client = new ServiceReference1.SayHelloClient(binding, address);
-            //var stopwatch = new Stopwatch();
-            //stopwatch.Start();
-            //var result = client.HelloAsync("helloworld");
-            //var elapsed = stopwatch.ElapsedMilliseconds;
-            //Console.WriteLine($"{elapsed} ms");
-
-            //BenchmarksEventSource.Log.Metadata("http/firstrequest", "max", "max", "First Request (ms)", "Time to first request in ms", "n0");
-            //BenchmarksEventSource.Measure("http/firstrequest", elapsed);
-            //Console.WriteLine(result.Result);
-
-            //var startTime = DateTime.Now;
-            //int request = 0;
-            //while (DateTime.Now <= startTime.AddMinutes(2))
-            //{
-            //    client.HelloAsync("helloworld");
-            //    request++;
-            //}
-            //Console.WriteLine(request);
-            //BenchmarksEventSource.Log.Metadata("bombardier/requests", "max", "sum", "Requests", "Total number of requests", "n0");
-            //BenchmarksEventSource.Measure("bombardier/requests", request);
-
-            //BenchmarksEventSource.Log.Metadata("bombardier/rps/max", "max", "sum", "Requests/sec (max)", "Max requests per second", "n0");
-
-            //BenchmarksEventSource.Measure("bombardier/rps/max", request / 120);
         }
 
         private bool ProcessRunOptions(string[] args)
@@ -243,6 +193,13 @@ namespace ConsoleApp5
         {
             Console.WriteLine("Wrong parameter: " + arg);
             return false;
+        }
+
+        static bool RemoteCertValidate(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
+        {
+
+            return true;
+
         }
     }
 }
