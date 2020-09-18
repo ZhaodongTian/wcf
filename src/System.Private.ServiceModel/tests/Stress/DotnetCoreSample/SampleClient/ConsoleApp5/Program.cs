@@ -30,25 +30,27 @@ namespace ConsoleApp5
 
         static void Main(string[] args)
         {
-            Program test = new Program();
-            if (test._paramBinding == TestBinding.NetTcp)
-            {
-                BenchmarksEventSource.Log.Metadata("NetTcp/Channel Open", "max", "max", "Channel Open Time (ms)", "Time to Open Channel in ms", "n0");
-                BenchmarksEventSource.Log.Metadata("NetTcp/firstrequest", "max", "max", "First Request (ms)", "Time to first request in ms", "n0");
-            }
-            else
-            {
-                BenchmarksEventSource.Log.Metadata("http/Channel Open", "max", "max", "Channel Open Time (ms)", "Time to Open Channel in ms", "n0");
-                BenchmarksEventSource.Log.Metadata("http/firstrequest", "max", "max", "First Request (ms)", "Time to first request in ms", "n0");
-            }
-            
-            BenchmarksEventSource.Log.Metadata("bombardier/requests", "max", "sum", "Requests", "Total number of requests", "n0");
-            BenchmarksEventSource.Log.Metadata("bombardier/rps/max", "max", "sum", "Requests/sec (max)", "Max requests per second", "n0");
+            Program test = new Program();            
            
             if (test.ProcessRunOptions(args))
             {
                 var startTime = DateTime.Now;
                 int request = 0;
+
+                if (test._paramBinding == TestBinding.NetTcp)
+                {
+                    BenchmarksEventSource.Log.Metadata("NetTcp/Channel Open", "max", "max", "Channel Open Time (ms)", "Time to Open Channel in ms", "n0");
+                    BenchmarksEventSource.Log.Metadata("NetTcp/firstrequest", "max", "max", "First Request (ms)", "Time to first request in ms", "n0");
+                }
+                else
+                {
+                    BenchmarksEventSource.Log.Metadata("http/Channel Open", "max", "max", "Channel Open Time (ms)", "Time to Open Channel in ms", "n0");
+                    BenchmarksEventSource.Log.Metadata("http/firstrequest", "max", "max", "First Request (ms)", "Time to first request in ms", "n0");
+                }
+
+                BenchmarksEventSource.Log.Metadata("bombardier/requests", "max", "sum", "Requests ("+test._paramPerfMeasurementDuration*1000+" ms)", "Total number of requests", "n0");
+                BenchmarksEventSource.Log.Metadata("bombardier/rps/max", "max", "sum", "Requests/sec (max)", "Max requests per second", "n0");
+
                 switch (test._paramBinding)
                 {
                     case TestBinding.BasicHttp:
@@ -70,6 +72,7 @@ namespace ConsoleApp5
                             default:
                                 break;
                         }
+
                         Console.WriteLine($"Testing TransferMode: {binding.TransferMode}");
                         ChannelFactory<ISayHello> factory = new ChannelFactory<ISayHello>(binding, new EndpointAddress(test._paramServiceUrl));
                         var stopwatchChannelOpen = new Stopwatch();
@@ -99,9 +102,12 @@ namespace ConsoleApp5
                         ChannelFactory<ISayHello> wsHttpFactory = new ChannelFactory<ISayHello>(wsHttpBinding, new EndpointAddress(test._paramServiceUrl));
                         wsHttpFactory.Credentials.UserName.UserName = "abc";
                         wsHttpFactory.Credentials.UserName.Password = "abc";
+
                         var stopwatchWSHttpChannelOpen = new Stopwatch();
                         stopwatchWSHttpChannelOpen.Start();
+                        wsHttpFactory.Open();
                         BenchmarksEventSource.Measure("http/Channel Open", stopwatchWSHttpChannelOpen.ElapsedMilliseconds);
+
                         var clientWSHttp = wsHttpFactory.CreateChannel();
                         var stopwatchWSHttpFirstReq = new Stopwatch();
                         stopwatchWSHttpFirstReq.Start();
@@ -120,12 +126,13 @@ namespace ConsoleApp5
                     case TestBinding.NetTcp:                        
                         NetTcpBinding netTcpBinding = new NetTcpBinding(SecurityMode.None) ;
                         ChannelFactory<IService1> netTcpFactory = new ChannelFactory<IService1>(netTcpBinding, new EndpointAddress(test._paramServiceUrl));
+
                         var stopwatchNetTcpChannelOpen = new Stopwatch();
                         stopwatchNetTcpChannelOpen.Start();
+                        netTcpFactory.Open();
                         BenchmarksEventSource.Measure("NetTcp/Channel Open", stopwatchNetTcpChannelOpen.ElapsedMilliseconds);
 
                         var clientNetTcp = netTcpFactory.CreateChannel();
-
                         var stopwatchNetTcpFirstReq = new Stopwatch();
                         stopwatchNetTcpFirstReq.Start();
                         var netTcpResult = clientNetTcp.GetDataAsync(1).Result;
@@ -157,7 +164,6 @@ namespace ConsoleApp5
 
                 switch (p[0].ToLower())
                 {
-
                     case Parameters.Binding:
                         if (!Enum.TryParse<TestBinding>(p[1], ignoreCase: true, result: out _paramBinding))
                         {
@@ -198,9 +204,7 @@ namespace ConsoleApp5
 
         static bool RemoteCertValidate(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {
-
             return true;
-
         }
     }
 }
