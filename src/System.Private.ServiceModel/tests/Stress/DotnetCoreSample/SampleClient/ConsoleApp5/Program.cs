@@ -48,7 +48,7 @@ namespace ConsoleApp5
                     BenchmarksEventSource.Log.Metadata("http/firstrequest", "max", "max", "First Request (ms)", "Time to first request in ms", "n0");
                 }
 
-                BenchmarksEventSource.Log.Metadata("bombardier/requests", "max", "sum", "Requests ("+test._paramPerfMeasurementDuration*1000+" ms)", "Total number of requests", "n0");
+                BenchmarksEventSource.Log.Metadata("bombardier/requests", "max", "sum", "Requests ("+test._paramPerfMeasurementDuration.TotalMilliseconds+" ms)", "Total number of requests", "n0");
                 BenchmarksEventSource.Log.Metadata("bombardier/rps/max", "max", "sum", "Requests/sec (max)", "Max requests per second", "n0");
 
                 switch (test._paramBinding)
