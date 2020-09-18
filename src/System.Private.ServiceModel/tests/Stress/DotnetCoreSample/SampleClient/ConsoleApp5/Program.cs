@@ -136,7 +136,7 @@ namespace ConsoleApp5
                         var stopwatchNetTcpFirstReq = new Stopwatch();
                         stopwatchNetTcpFirstReq.Start();
                         var netTcpResult = clientNetTcp.GetDataAsync(1).Result;
-                        BenchmarksEventSource.Measure("http/firstrequest", stopwatchNetTcpFirstReq.ElapsedMilliseconds);
+                        BenchmarksEventSource.Measure("NetTcp/firstrequest", stopwatchNetTcpFirstReq.ElapsedMilliseconds);
                        
                         while (DateTime.Now <= startTime.Add(test._paramPerfMeasurementDuration))
                         {
