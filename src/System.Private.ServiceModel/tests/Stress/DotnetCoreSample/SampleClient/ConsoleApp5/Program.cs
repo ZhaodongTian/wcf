@@ -95,6 +95,7 @@ namespace ConsoleApp5
                     case TestBinding.WSHttp:
                         ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(RemoteCertValidate);
                         WSHttpBinding wsHttpBinding = new WSHttpBinding(SecurityMode.TransportWithMessageCredential);
+                        wsHttpBinding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
                         ChannelFactory<ISayHello> wsHttpFactory = new ChannelFactory<ISayHello>(wsHttpBinding, new EndpointAddress(test._paramServiceUrl));
                         wsHttpFactory.Credentials.UserName.UserName = "abc";
                         wsHttpFactory.Credentials.UserName.Password = "abc";
