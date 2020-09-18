@@ -20,8 +20,6 @@ namespace ConsoleApp5
 
     class Program
     {
-        // Parameters and default values
-
         private TestBinding _paramBinding = TestBinding.BasicHttp;
         private TimeSpan _paramPerfMeasurementDuration = s_defaultPerfMeasurementDuration;
         private string _paramServiceUrl = "";
@@ -30,25 +28,16 @@ namespace ConsoleApp5
 
         static void Main(string[] args)
         {
-            Program test = new Program();            
-           
+            Program test = new Program();
+
             if (test.ProcessRunOptions(args))
             {
                 var startTime = DateTime.Now;
                 int request = 0;
 
-                if (test._paramBinding == TestBinding.NetTcp)
-                {
-                    BenchmarksEventSource.Log.Metadata("NetTcp/Channel Open", "max", "max", "Channel Open Time (ms)", "Time to Open Channel in ms", "n0");
-                    BenchmarksEventSource.Log.Metadata("NetTcp/firstrequest", "max", "max", "First Request (ms)", "Time to first request in ms", "n0");
-                }
-                else
-                {
-                    BenchmarksEventSource.Log.Metadata("http/Channel Open", "max", "max", "Channel Open Time (ms)", "Time to Open Channel in ms", "n0");
-                    BenchmarksEventSource.Log.Metadata("http/firstrequest", "max", "max", "First Request (ms)", "Time to first request in ms", "n0");
-                }
-
-                BenchmarksEventSource.Log.Metadata("bombardier/requests", "max", "sum", "Requests ("+test._paramPerfMeasurementDuration.TotalMilliseconds+" ms)", "Total number of requests", "n0");
+                BenchmarksEventSource.Log.Metadata("channelopen", "max", "max", "Channel Open Time (ms)", "Time to Open Channel in ms", "n0");
+                BenchmarksEventSource.Log.Metadata("firstrequest", "max", "max", "First Request (ms)", "Time to first request in ms", "n0");
+                BenchmarksEventSource.Log.Metadata("bombardier/requests", "max", "sum", "Requests (" + test._paramPerfMeasurementDuration.TotalMilliseconds + " ms)", "Total number of requests", "n0");
                 BenchmarksEventSource.Log.Metadata("bombardier/rps/max", "max", "sum", "Requests/sec (max)", "Max requests per second", "n0");
 
                 switch (test._paramBinding)
@@ -78,17 +67,17 @@ namespace ConsoleApp5
                         var stopwatchChannelOpen = new Stopwatch();
                         stopwatchChannelOpen.Start();
                         factory.Open();
-                        BenchmarksEventSource.Measure("http/Channel Open", stopwatchChannelOpen.ElapsedMilliseconds);
+                        BenchmarksEventSource.Measure("channelopen", stopwatchChannelOpen.ElapsedMilliseconds);
 
                         var client = factory.CreateChannel();
                         var stopwatchFirstReq = new Stopwatch();
                         stopwatchFirstReq.Start();
                         var result = client.HelloAsync("helloworld").Result;
-                        BenchmarksEventSource.Measure("http/firstrequest", stopwatchFirstReq.ElapsedMilliseconds);
-                        
+                        BenchmarksEventSource.Measure("firstrequest", stopwatchFirstReq.ElapsedMilliseconds);
+
                         while (DateTime.Now <= startTime.Add(test._paramPerfMeasurementDuration))
                         {
-                            var rtnResult=client.HelloAsync("helloworld").Result;
+                            var rtnResult = client.HelloAsync("helloworld").Result;
                             request++;
                         }
 
@@ -106,13 +95,13 @@ namespace ConsoleApp5
                         var stopwatchWSHttpChannelOpen = new Stopwatch();
                         stopwatchWSHttpChannelOpen.Start();
                         wsHttpFactory.Open();
-                        BenchmarksEventSource.Measure("http/Channel Open", stopwatchWSHttpChannelOpen.ElapsedMilliseconds);
+                        BenchmarksEventSource.Measure("channelopen", stopwatchWSHttpChannelOpen.ElapsedMilliseconds);
 
                         var clientWSHttp = wsHttpFactory.CreateChannel();
                         var stopwatchWSHttpFirstReq = new Stopwatch();
                         stopwatchWSHttpFirstReq.Start();
                         Console.WriteLine(clientWSHttp.HelloAsync("helloworld").Result);
-                        BenchmarksEventSource.Measure("http/firstrequest", stopwatchWSHttpFirstReq.ElapsedMilliseconds);
+                        BenchmarksEventSource.Measure("firstrequest", stopwatchWSHttpFirstReq.ElapsedMilliseconds);
 
                         while (DateTime.Now <= startTime.Add(test._paramPerfMeasurementDuration))
                         {
@@ -123,21 +112,21 @@ namespace ConsoleApp5
                         BenchmarksEventSource.Measure("bombardier/requests", request);
                         BenchmarksEventSource.Measure("bombardier/rps/max", request / test._paramPerfMeasurementDuration.TotalSeconds);
                         break;
-                    case TestBinding.NetTcp:                        
-                        NetTcpBinding netTcpBinding = new NetTcpBinding(SecurityMode.None) ;
+                    case TestBinding.NetTcp:
+                        NetTcpBinding netTcpBinding = new NetTcpBinding(SecurityMode.None);
                         ChannelFactory<IService1> netTcpFactory = new ChannelFactory<IService1>(netTcpBinding, new EndpointAddress(test._paramServiceUrl));
 
                         var stopwatchNetTcpChannelOpen = new Stopwatch();
                         stopwatchNetTcpChannelOpen.Start();
                         netTcpFactory.Open();
-                        BenchmarksEventSource.Measure("NetTcp/Channel Open", stopwatchNetTcpChannelOpen.ElapsedMilliseconds);
+                        BenchmarksEventSource.Measure("channelopen", stopwatchNetTcpChannelOpen.ElapsedMilliseconds);
 
                         var clientNetTcp = netTcpFactory.CreateChannel();
                         var stopwatchNetTcpFirstReq = new Stopwatch();
                         stopwatchNetTcpFirstReq.Start();
                         var netTcpResult = clientNetTcp.GetDataAsync(1).Result;
-                        BenchmarksEventSource.Measure("NetTcp/firstrequest", stopwatchNetTcpFirstReq.ElapsedMilliseconds);
-                       
+                        BenchmarksEventSource.Measure("firstrequest", stopwatchNetTcpFirstReq.ElapsedMilliseconds);
+
                         while (DateTime.Now <= startTime.Add(test._paramPerfMeasurementDuration))
                         {
                             var rtnResult = clientNetTcp.GetDataAsync(1).Result;
