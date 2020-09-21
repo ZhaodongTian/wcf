@@ -42,7 +42,7 @@ namespace ConsoleApp5
             
            
             
-                certificate = AddToStoreIfNeeded(StoreName.TrustedPeople, StoreLocation.LocalMachine, certificate);
+                certificate = AddToStoreIfNeeded(StoreName.TrustedPeople, StoreLocation.CurrentUser, certificate);
            
            
             return certificate;
@@ -57,7 +57,7 @@ namespace ConsoleApp5
                 // a LocalMachine store
                 using (X509Store store = new X509Store(storeName, storeLocation))
                 {
-                    store.Open(OpenFlags.ReadOnly);
+                    store.Open(OpenFlags.ReadWrite);
                     resultCert = CertificateFromThumbprint(store, certificate.Thumbprint, validOnly: false);
                 }
 
