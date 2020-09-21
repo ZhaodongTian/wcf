@@ -39,14 +39,11 @@ namespace ConsoleApp5
         public static X509Certificate2 InstallCertificateToTrustedPeopleStore(X509Certificate2 certificate)
         {
             Console.WriteLine(Environment.OSVersion.Platform.ToString());
-            if (Environment.OSVersion.Platform == PlatformID.Unix)
-            {
-                certificate = AddToStoreIfNeeded(StoreName.TrustedPeople, StoreLocation.CurrentUser, certificate);
-            }
-            else
-            {
+            
+           
+            
                 certificate = AddToStoreIfNeeded(StoreName.TrustedPeople, StoreLocation.LocalMachine, certificate);
-            }
+           
            
             return certificate;
         }
