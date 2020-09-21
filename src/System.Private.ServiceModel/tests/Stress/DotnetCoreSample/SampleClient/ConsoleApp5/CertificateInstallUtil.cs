@@ -18,9 +18,53 @@ namespace ConsoleApp5
             return InstallCertificateToTrustedPeopleStore(clientCertificate);
         }
 
+        public static X509Certificate2 InstallCertificateToRootStore(X509Certificate2 certificate)
+        {
+            // See explanation of StoreLocation selection at PlatformSpecificRootStoreLocation
+            certificate = AddToStoreIfNeeded(StoreName.Root, StoreLocation.CurrentUser, certificate);
+            return certificate;
+        }
+
+        private static X509Certificate2 InstallRootCertificateFromServer(string serviceUrl, string cerResoure)
+        {
+            X509Certificate2 rootCertificate = new X509Certificate2(GetResourceFromServiceAsByteArray(serviceUrl, cerResoure));
+            return InstallCertificateToRootStore(rootCertificate);
+        }
+
+        public static void EnsureClientCertificateInstalled(string serviceUrl, string cerResoure)
+        {
+
+            try
+            {
+                var rootCertificate = InstallRootCertificateFromServer(serviceUrl, "RootCert");
+            }
+            catch
+            {
+                // Exceptions installing the root certificate are captured and
+                // will be reported if it is requested.  But allow the attempt
+                // to install the client certificate to succeed or fail independently.
+            }
+
+            try
+            {
+                // Once only, we interrogate the service utility endpoint
+                // for the client certificate and install it locally if it
+                // is not already in the store.
+                var clientCertificate = InstallClientCertificateFromServer(serviceUrl, cerResoure);
+
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+
+        }
+
         public static byte[] GetResourceFromServiceAsByteArray(string serviceUrl, string resource)
         {
-            string requestUri = GetResourceAddress(serviceUrl,resource);
+            string requestUri = GetResourceAddress(serviceUrl, resource);
             Console.WriteLine(String.Format("Invoking {0} ...", requestUri));
 
             using (HttpClient httpClient = new HttpClient())
@@ -30,21 +74,21 @@ namespace ConsoleApp5
             }
         }
 
-        private static string GetResourceAddress(string serviceUrl,string resource, string protocol = "http")
+        private static string GetResourceAddress(string serviceUrl, string resource, string protocol = "http")
         {
             string host = new Uri(serviceUrl).Host;
-            return string.Format(@"{0}://{1}/{2}/{3}/{4}", protocol, host, "wcfservice38","testhost.svc", resource);
+            return string.Format(@"{0}://{1}/{2}/{3}/{4}", protocol, host, "wcfservice38", "testhost.svc", resource);
         }
 
         public static X509Certificate2 InstallCertificateToTrustedPeopleStore(X509Certificate2 certificate)
         {
             Console.WriteLine(Environment.OSVersion.Platform.ToString());
-            
-           
-            
-                certificate = AddToStoreIfNeeded(StoreName.TrustedPeople, StoreLocation.CurrentUser, certificate);
-           
-           
+
+
+
+            certificate = AddToStoreIfNeeded(StoreName.TrustedPeople, StoreLocation.CurrentUser, certificate);
+
+
             return certificate;
         }
 

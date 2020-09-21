@@ -84,8 +84,9 @@ namespace ConsoleApp5
                         BenchmarksEventSource.Measure("bombardier/requests", request);
                         BenchmarksEventSource.Measure("bombardier/rps/max", request / test._paramPerfMeasurementDuration.TotalSeconds);
                         break;
-                    case TestBinding.WSHttp:                        
-                        CertificateInstallUtil.InstallClientCertificateFromServer(test._paramServiceUrl, "machinecert");
+                    case TestBinding.WSHttp:
+                        // CertificateInstallUtil.InstallClientCertificateFromServer(test._paramServiceUrl, "machinecert");
+                        CertificateInstallUtil.EnsureClientCertificateInstalled(test._paramServiceUrl, "machinecert");
                         ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(RemoteCertValidate);
                         WSHttpBinding wsHttpBinding = new WSHttpBinding(SecurityMode.TransportWithMessageCredential);
                         wsHttpBinding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
