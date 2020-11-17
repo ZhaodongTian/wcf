@@ -63,7 +63,7 @@ namespace WCFCorePerfService
                 process.Start();
                // BenchmarksEventSource.SetChildProcessId(process.Id);
                 process.BeginOutputReadLine();
-            process.StandardInput.WriteLine();
+           // process.StandardInput.WriteLine();
                process.WaitForExit();
 
                 //var dict = test.ProcessOutPut(stringBuilder.ToString());

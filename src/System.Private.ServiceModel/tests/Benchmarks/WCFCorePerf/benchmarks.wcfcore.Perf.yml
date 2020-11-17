@@ -15,7 +15,8 @@ jobs:
       repository: https://github.com/ZhaodongTian/wcf.git
       branchOrCommit: PerfTest
       project: src/System.Private.ServiceModel/tests/Benchmarks/WCFCorePerf/WCFCorePerfService/WCFCorePerfService.csproj
- 
+    isConsoleApp: true
+   
 
 scenarios:
   BasicHttpWithBuffered:
