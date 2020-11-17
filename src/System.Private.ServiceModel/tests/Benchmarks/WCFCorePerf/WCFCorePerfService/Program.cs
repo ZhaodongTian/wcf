@@ -14,7 +14,7 @@ namespace WCFCorePerfService
         {
             string url = "https://wcfcrank.blob.core.windows.net/app/WcfCorePerfCrankService.zip";
 
-            var bombardierFileName = Path.GetFileName(url);
+            var bombardierFileName = Path.GetFileNameWithoutExtension(url);
             var _httpClient = new HttpClient();
 
             using (var downloadStream = await _httpClient.GetStreamAsync(url))
