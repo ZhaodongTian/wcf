@@ -117,7 +117,7 @@ namespace WCFCorePerf
                         break;
                     case TestBinding.NetTcp:
                         NetTcpBinding netTcpBinding = new NetTcpBinding(SecurityMode.None);
-                        ChannelFactory<IService1> netTcpFactory = new ChannelFactory<IService1>(netTcpBinding, new EndpointAddress(test._paramServiceUrl));
+                        ChannelFactory<ISayHello> netTcpFactory = new ChannelFactory<ISayHello>(netTcpBinding, new EndpointAddress(test._paramServiceUrl));
 
                         var stopwatchNetTcpChannelOpen = new Stopwatch();
                         stopwatchNetTcpChannelOpen.Start();
@@ -127,12 +127,12 @@ namespace WCFCorePerf
                         var clientNetTcp = netTcpFactory.CreateChannel();
                         var stopwatchNetTcpFirstReq = new Stopwatch();
                         stopwatchNetTcpFirstReq.Start();
-                        var netTcpResult = clientNetTcp.GetDataAsync(1).Result;
+                        var netTcpResult = clientNetTcp.HelloAsync("helloworld").Result;
                         BenchmarksEventSource.Measure("wcfcoreperf/firstrequest", stopwatchNetTcpFirstReq.ElapsedMilliseconds);
 
                         while (DateTime.Now <= startTime.Add(test._paramPerfMeasurementDuration))
                         {
-                            var rtnResult = clientNetTcp.GetDataAsync(1).Result;
+                            var rtnResult = clientNetTcp.HelloAsync("helloworld").Result;
                             request++;
                         }
 
