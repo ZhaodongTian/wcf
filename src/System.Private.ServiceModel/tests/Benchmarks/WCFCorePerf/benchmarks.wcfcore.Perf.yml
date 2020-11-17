@@ -9,7 +9,8 @@ jobs:
     variables:
       Server: wcftestvm005.redmond.corp.microsoft.com
       Duration: 300
-    arguments: " binding:{{Binding}} serviceurl:{{Protocol}}://{{Server}}/WCFCorePerf/TestService.svc{{Url}} transfermode:{{TransferMode}} perfmeasurementduration:{{Duration}} "
+      port: 8331
+    arguments: " binding:{{Binding}} serviceurl:{{Protocol}}://{{Server}} {% if Binding==WSHttp %}:{{port}}{% endif %}/WCFCorePerf/TestService.svc{{Url}} transfermode:{{TransferMode}} perfmeasurementduration:{{Duration}} "
   WCFCorePerfService:
     source:
       repository: https://github.com/ZhaodongTian/wcf.git
