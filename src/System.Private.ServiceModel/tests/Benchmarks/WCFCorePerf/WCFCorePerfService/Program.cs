@@ -14,7 +14,7 @@ namespace WCFCorePerfService
         {
             string url = "https://wcfcrank.blob.core.windows.net/app/WcfCorePerfCrankService.zip";
 
-            var bombardierFileName = Path.GetFileNameWithoutExtension(url);
+            var bombardierFileName = Path.GetFileName(url);
             var _httpClient = new HttpClient();
 
             using (var downloadStream = await _httpClient.GetStreamAsync(url))
@@ -24,7 +24,7 @@ namespace WCFCorePerfService
                 await downloadStream.CopyToAsync(fileStream);
             }
 
-            ZipFile.ExtractToDirectory(@".\WcfCorePerfCrankService.zip",@".\WcfCorePerfCrankService");
+            ZipFile.ExtractToDirectory(bombardierFileName, @".\",true);
             //if (test.ProcessRunOptions(args))
             //{
             //    BenchmarksEventSource.Log.Metadata("channelopen", "max", "max", "Channel Open Time (ms)", "Time to Open Channel in ms", "n0");
@@ -32,13 +32,12 @@ namespace WCFCorePerfService
             //    BenchmarksEventSource.Log.Metadata("bombardier/requests", "max", "sum", "Requests (" + test._paramPerfMeasurementDuration * 1000 + " ms)", "Total number of requests", "n0");
             //    BenchmarksEventSource.Log.Metadata("bombardier/rps/max", "max", "sum", "Requests/sec (max)", "Max requests per second", "n0");
 
-                var process = new Process()
-                {
-                    StartInfo = {
-                    FileName = bombardierFileName,
+            var process = new Process()
+            {
+                StartInfo = {
+                    FileName = "WcfCorePerfCrankService.exe",
                     RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    WorkingDirectory=@".\WcfCorePerfCrankService"
+                    UseShellExecute = false
                 },
                     EnableRaisingEvents = true
                 };
@@ -59,7 +58,7 @@ namespace WCFCorePerfService
                 };
 
                 //string arg = "binding:" + test._paramBinding + " transfermode:" + test._paramTransferMode + " perfmeasurementduration:" + test._paramPerfMeasurementDuration + " serviceurl:" + test._paramServiceUrl;
-                //process.StartInfo.Arguments = arg;
+               // process.StartInfo.Arguments = arg;
                 process.Start();
                // BenchmarksEventSource.SetChildProcessId(process.Id);
                 process.BeginOutputReadLine();
