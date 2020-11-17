@@ -64,7 +64,7 @@ namespace WCFCorePerfService
                // BenchmarksEventSource.SetChildProcessId(process.Id);
                 process.BeginOutputReadLine();
             process.StandardInput.WriteLine();
-                process.WaitForExit();
+               // process.WaitForExit();
 
                 //var dict = test.ProcessOutPut(stringBuilder.ToString());
                 //BenchmarksEventSource.Measure("channelopen", dict["channelopen"]);
