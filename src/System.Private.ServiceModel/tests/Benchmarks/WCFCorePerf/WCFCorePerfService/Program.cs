@@ -4,12 +4,13 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace WCFCorePerfService
 {
     class Program
     {
-        static async void Main(string[] args)
+        static async Task Main(string[] args)
         {
             string url = "https://wcfcrank.blob.core.windows.net/app/WcfCorePerfCrankService.zip";
 

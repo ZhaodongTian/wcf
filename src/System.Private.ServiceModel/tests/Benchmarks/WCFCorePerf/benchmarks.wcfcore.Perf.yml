@@ -7,14 +7,14 @@ jobs:
     isConsoleApp: true
     waitForExit: true
     variables:
-      Server: /
+      Server: wcftestvm005.redmond.corp.microsoft.com
       Duration: 300
     arguments: " binding:{{Binding}} serviceurl:{{Protocol}}://{{Server}}/WCFCorePerf/TestService.svc{{Url}} transfermode:{{TransferMode}} perfmeasurementduration:{{Duration}} "
   WCFCorePerfService:
     source:
       repository: https://github.com/ZhaodongTian/wcf.git
       branchOrCommit: PerfTest
-      project: src/System.Private.ServiceModel/tests/Benchmarks/WCFCorePerf/WCFCorePerf/WCFCorePerfService.csproj
+      project: src/System.Private.ServiceModel/tests/Benchmarks/WCFCorePerf/WCFCorePerfService/WCFCorePerfService.csproj
     isConsoleApp: true
     waitForExit: true
 
