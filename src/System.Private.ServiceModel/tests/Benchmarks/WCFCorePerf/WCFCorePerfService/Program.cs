@@ -37,6 +37,7 @@ namespace WCFCorePerfService
                 StartInfo = {
                     FileName = "WcfCorePerfCrankService.exe",
                     RedirectStandardOutput = true,
+                    RedirectStandardInput = true,
                     UseShellExecute = false
                 },
                     EnableRaisingEvents = true
@@ -62,6 +63,7 @@ namespace WCFCorePerfService
                 process.Start();
                // BenchmarksEventSource.SetChildProcessId(process.Id);
                 process.BeginOutputReadLine();
+            process.StandardInput.WriteLine();
                 process.WaitForExit();
 
                 //var dict = test.ProcessOutPut(stringBuilder.ToString());
