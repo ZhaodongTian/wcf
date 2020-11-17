@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
+using System.ServiceModel.Security;
 using Microsoft.Crank.EventSources;
 
 namespace WCFCorePerf
@@ -92,6 +93,11 @@ namespace WCFCorePerf
                         WSHttpBinding wsHttpBinding = new WSHttpBinding(SecurityMode.TransportWithMessageCredential);
                         wsHttpBinding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
                         ChannelFactory<ISayHello> wsHttpFactory = new ChannelFactory<ISayHello>(wsHttpBinding, new EndpointAddress(test._paramServiceUrl));
+                        wsHttpFactory.Credentials.ServiceCertificate.SslCertificateAuthentication = new X509ServiceCertificateAuthentication
+                        {
+                            CertificateValidationMode = X509CertificateValidationMode.None,
+                            RevocationMode = X509RevocationMode.NoCheck
+                        };
                         wsHttpFactory.Credentials.UserName.UserName = "abc";
                         wsHttpFactory.Credentials.UserName.Password = "abc";
 
