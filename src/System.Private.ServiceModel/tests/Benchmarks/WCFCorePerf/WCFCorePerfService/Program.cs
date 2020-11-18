@@ -33,7 +33,7 @@ namespace WCFCorePerfService
 
             ZipFile.ExtractToDirectory(bombardierFileName, @".\", true);
             string filePath = Path.Combine(Environment.CurrentDirectory, "WcfCorePerfCrankService.exe");
-            string command = $" advfirewall firewall add rule name=\"{bombardierFileName}\" dir=in action=allow program=\"{filePath}\" enable=yes";
+            string command = $" advfirewall firewall add rule name=\"WcfCorePerfCrankService\" dir=in action=allow program=\"{filePath}\" enable=yes";
             ExecuteCommand(command, Environment.CurrentDirectory, TimeSpan.FromSeconds(20));
             Program test = new Program();
             if (test.ProcessRunOptions(args))
@@ -66,10 +66,7 @@ namespace WCFCorePerfService
                 process.StartInfo.Arguments = arg;
                 process.Start();
                 process.BeginOutputReadLine();
-                process.WaitForExit();
-                
-                command = $" advfirewall firewall delete rule name=\"{bombardierFileName}\"";
-                ExecuteCommand(command, Environment.CurrentDirectory, TimeSpan.FromSeconds(20));
+                process.WaitForExit();                
             }
         }
 
@@ -127,8 +124,8 @@ namespace WCFCorePerfService
             {
                 throw new TimeoutException(string.Format("Command '{0}' was killed by timeout {1}.", new object[]
                 {
-            command,
-            timeout.ToString()
+                    command,
+                    timeout.ToString()
                 }));
             }
             return process.ExitCode;
