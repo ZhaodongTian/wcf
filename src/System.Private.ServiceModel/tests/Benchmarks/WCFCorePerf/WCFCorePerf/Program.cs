@@ -88,8 +88,7 @@ namespace WCFCorePerf
                         BenchmarksEventSource.Measure("wcfcoreperf/requests", request);
                         BenchmarksEventSource.Measure("wcfcoreperf/rps/max", request / test._paramPerfMeasurementDuration.TotalSeconds);
                         break;
-                    case TestBinding.WSHttp:                        
-                        CertificateInstallUtil.EnsureClientCertificateInstalled(test._paramServiceUrl, "machinecert");                        
+                    case TestBinding.WSHttp:                                               
                         WSHttpBinding wsHttpBinding = new WSHttpBinding(SecurityMode.TransportWithMessageCredential);
                         wsHttpBinding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
                         ChannelFactory<ISayHello> wsHttpFactory = new ChannelFactory<ISayHello>(wsHttpBinding, new EndpointAddress(test._paramServiceUrl));
