@@ -33,7 +33,7 @@ namespace WCFCorePerfService
 
             ZipFile.ExtractToDirectory(bombardierFileName, @".\", true);
             string filePath = Path.Combine(Environment.CurrentDirectory, "WcfCorePerfCrankService.exe");
-            string command = $" advfirewall firewall add rule name=\"WcfCorePerfCrankService\" dir=in action=allow program=\"{filePath}\" enable=yes";
+            string command = $" advfirewall firewall add rule name=\"WcfCorePerfCrankService\" dir=in protocol=TCP action=allow program=\"{filePath}\" enable=yes";
             ExecuteCommand(command, Environment.CurrentDirectory, TimeSpan.FromSeconds(20));
             Program test = new Program();
             if (test.ProcessRunOptions(args))
