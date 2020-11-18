@@ -7,15 +7,14 @@ jobs:
     isConsoleApp: true
     waitForExit: true
     variables:
-      Server: wcftestvm005.redmond.corp.microsoft.com
       Duration: 300
-      port: 8331
-    arguments: " binding:{{Binding}} serviceurl:{{Protocol}}://{{Server}} {% if Binding==WSHttp %}:{{port}}{% endif %}/WCFCorePerf/TestService.svc{{Url}} transfermode:{{TransferMode}} perfmeasurementduration:{{Duration}} "
+    arguments: " binding:{{Binding}} serviceurl:{{Protocol}}://{{serverAddress}}{% if Binding == 'WSHttp' %}:{{serverPort}}{% endif %}/WCFCorePerf/TestService.svc/{{EndpointAddress}} transfermode:{{TransferMode}} perfmeasurementduration:{{Duration}} "
   WCFCorePerfService:
     source:
       repository: https://github.com/ZhaodongTian/wcf.git
       branchOrCommit: PerfTest
       project: src/System.Private.ServiceModel/tests/Benchmarks/WCFCorePerf/WCFCorePerfService/WCFCorePerfService.csproj
+    arguments: " port:{{serverPort}}"
     isConsoleApp: true
    
 
@@ -27,7 +26,7 @@ scenarios:
       job: WCFCorePerf
       variables:
         Protocol: Http
-        Url: /BasicHttp
+        EndpointAddress: BasicHttp
         Binding: BasicHttp
         TransferMode: Buffered
         path: /
@@ -38,7 +37,7 @@ scenarios:
       job: WCFCorePerf
       variables:
         Protocol: Http
-        Url: /BasicHttp
+        EndpointAddress: BasicHttp
         Binding: BasicHttp
         TransferMode: Default
         path: /
@@ -49,7 +48,7 @@ scenarios:
       job: WCFCorePerf
       variables:
         Protocol: Https
-        Url: /WSHttp
+        EndpointAddress: WSHttp
         Binding: WSHttp
         path: /
   NetTcp: 
@@ -59,14 +58,15 @@ scenarios:
       job: WCFCorePerf
       variables:
         Protocol: net.tcp
-        Url: /NetTcp
+        EndpointAddress: NetTcp
         Binding: NetTcp
         path: /
 
 profiles:
   local:
     variables:
-      serverUri: Http://localhost
+      serverAddress: localhost
+      serverPort: 5000
     jobs: 
       application:
         endpoints: 
