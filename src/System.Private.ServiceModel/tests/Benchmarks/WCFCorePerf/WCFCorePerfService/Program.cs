@@ -32,9 +32,6 @@ namespace WCFCorePerfService
             }
 
             ZipFile.ExtractToDirectory(bombardierFileName, @".\", true);
-            string filePath = Path.Combine(Environment.CurrentDirectory, "WcfCorePerfCrankService.exe");
-            string command = $" advfirewall firewall add rule name=\"WcfCorePerfCrankService\" dir=in protocol=TCP action=allow program=\"{filePath}\" enable=yes";
-            ExecuteCommand(command, Environment.CurrentDirectory, TimeSpan.FromSeconds(20));
             Program test = new Program();
             if (test.ProcessRunOptions(args))
             {
@@ -93,42 +90,6 @@ namespace WCFCorePerfService
             }
 
             return true;
-        }
-
-        private static int ExecuteCommand(string command, string workingDirectory, TimeSpan timeout)
-        {
-            Process process = new Process();
-            process.StartInfo.FileName = "netsh";
-            process.StartInfo.Arguments = command;
-            if (workingDirectory != null)
-            {
-                process.StartInfo.WorkingDirectory = workingDirectory;
-            }
-            process.StartInfo.UseShellExecute = false;
-            process.Start();
-            bool flag;
-            if (timeout.TotalMilliseconds >= Int32.MaxValue)
-            {
-                flag = process.WaitForExit(Int32.MaxValue);
-            }
-            else
-            {
-                flag = process.WaitForExit((int)timeout.TotalMilliseconds);
-            }
-            if (!flag)
-            {
-                process.Kill();
-            }
-
-            if (!flag)
-            {
-                throw new TimeoutException(string.Format("Command '{0}' was killed by timeout {1}.", new object[]
-                {
-                    command,
-                    timeout.ToString()
-                }));
-            }
-            return process.ExitCode;
         }
     }
 }
