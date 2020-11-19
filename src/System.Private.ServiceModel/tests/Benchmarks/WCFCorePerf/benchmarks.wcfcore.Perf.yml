@@ -29,7 +29,6 @@ scenarios:
         EndpointAddress: BasicHttp
         Binding: BasicHttp
         TransferMode: Buffered
-        path: /
   BasicHttpWithDefault: 
     application:
       job: WCFCorePerfService
@@ -40,7 +39,6 @@ scenarios:
         EndpointAddress: BasicHttp
         Binding: BasicHttp
         TransferMode: Default
-        path: /
   WSHttp:    
     application:
       job: WCFCorePerfService
@@ -50,7 +48,6 @@ scenarios:
         Protocol: Https
         EndpointAddress: WSHttp
         Binding: WSHttp
-        path: /
   NetTcp: 
     application:
       job: WCFCorePerfService
@@ -60,7 +57,6 @@ scenarios:
         Protocol: net.tcp
         EndpointAddress: NetTcp
         Binding: NetTcp
-        path: /
 
 profiles:
   local:
