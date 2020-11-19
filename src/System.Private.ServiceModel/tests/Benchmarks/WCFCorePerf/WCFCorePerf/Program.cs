@@ -145,9 +145,6 @@ namespace WCFCorePerf
                         BenchmarksEventSource.Measure("wcfcoreperf/rps/max", request / test._paramPerfMeasurementDuration.TotalSeconds);
                         break;
                 }
-
-                string command = $" advfirewall firewall delete rule name=\"WcfCorePerfCrankService\"";
-                ExecuteCommand(command, Environment.CurrentDirectory, TimeSpan.FromSeconds(20));
             }
         }
 
