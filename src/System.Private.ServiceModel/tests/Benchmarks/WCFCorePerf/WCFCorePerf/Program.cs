@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
@@ -146,6 +147,9 @@ namespace WCFCorePerf
                         break;
                 }
             }
+
+            //cleanup firewall rull
+            CleanupResourceFromService(test._paramServiceUrl, "Cleanup");
         }
 
         private bool ProcessRunOptions(string[] args)
@@ -197,6 +201,19 @@ namespace WCFCorePerf
         {
             Console.WriteLine("Wrong parameter: " + arg);
             return false;
+        }
+
+        private static string CleanupResourceFromService(string serviceUrl, string resource)
+        {
+            string host = new Uri(serviceUrl).Host;
+            string requestUri= string.Format(@"{0}://{1}/{2}/{3}/{4}", "http", host, "wcfcoreperf", "TestService.svc/TestHost", resource);           
+            Console.WriteLine(String.Format("Invoking {0} ...", requestUri));
+
+            using (HttpClient httpClient = new HttpClient())
+            {
+                HttpResponseMessage response = httpClient.GetAsync(requestUri).GetAwaiter().GetResult();
+                return response.Content.ReadAsStringAsync().Result;
+            }
         }
     }
 }
